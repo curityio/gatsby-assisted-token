@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {
     CLIENT_ID,
-    ISSUER
+    ISSUER,
+    SCOPE
 } from './constants';
 import axios from 'axios';
 
@@ -88,7 +89,7 @@ class TokenAssistantContextProvider extends Component {
             console.error('Token Assistant is undefined.');
             return false;
         }
-        this.tokenAssistant.loginIfRequired({ "scope": "openid" }).then((msg) => {
+        this.tokenAssistant.loginIfRequired({ "scope": SCOPE }).then((msg) => {
             console.log('Retrieved tokens', msg);
             let additionalData = this.tokenAssistant.getAdditionalData();
             console.log('additional data', additionalData)

@@ -4,7 +4,7 @@ This is an example based on https://github.com/curityio/react-assisted-token-web
 To run in development mode:
 `gatsby develop -S`
 
-Configure the client settings in `components/constants.js`
+Configure the client settings in `index.js`
 
 ## Client Config
 The example uses a client with the following config:

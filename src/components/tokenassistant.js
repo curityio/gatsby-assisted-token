@@ -1,9 +1,4 @@
 import React, { Component } from 'react';
-import {
-    CLIENT_ID,
-    ISSUER,
-    SCOPE
-} from './constants';
 import axios from 'axios';
 
 const { Provider, Consumer } = React.createContext();
@@ -13,6 +8,8 @@ class TokenAssistantContextProvider extends Component {
     count = 0;
     tokenAssistant;
     debug = false;
+    issuer = undefined;
+    clientId = undefined;
     state = {
         isLoggedIn: false,
     };
@@ -21,6 +18,14 @@ class TokenAssistantContextProvider extends Component {
         super(props);
 
         this.debug = props.debug === "true" ? true : false;
+        this.issuer = props.issuer;
+        this.clientId = props.clientId;
+        this.scope = props.scope !== undefined ? props.scope : ""
+
+        if (this.issuer === undefined || this.clientId === undefined) {
+            throw new Error("Issuer or client_id was not configured");
+        }
+
         this.loadConfiguration();
     }
 
@@ -36,7 +41,7 @@ class TokenAssistantContextProvider extends Component {
     }
 
     loadConfiguration = () => {
-        axios.get(ISSUER + "/.well-known/openid-configuration").then(response => {
+        axios.get(this.issuer + "/.well-known/openid-configuration").then(response => {
             this.config = response.data;
             console.log(response.data);
             this.addScriptToIndexFile();
@@ -83,7 +88,7 @@ class TokenAssistantContextProvider extends Component {
         }
         window.curity.debug = this.debug;
         this.tokenAssistant = window.curity.token.assistant({
-            clientId: CLIENT_ID,
+            clientId: this.clientId,
         });
     }
 
@@ -92,7 +97,7 @@ class TokenAssistantContextProvider extends Component {
             console.error('Token Assistant is undefined.');
             return false;
         }
-        this.tokenAssistant.loginIfRequired({ "scope": SCOPE }).then((msg) => {
+        this.tokenAssistant.loginIfRequired({ "scope": this.scope }).then((msg) => {
             console.log('Retrieved tokens', msg);
             let additionalData = this.tokenAssistant.getAdditionalData();
             console.log('additional data', additionalData)
@@ -149,7 +154,7 @@ const ControlPanel = () => {
 function TokenAssistant(props) {
     return (
         <div className="tokenassistant">
-            <TokenAssistantContextProvider debug={props.debug}>
+            <TokenAssistantContextProvider debug={props.debug} issuer={props.issuer} clientId={props.clientId} scope={props.scope}>
                 <Greeting />
                 <ControlPanel />
                 <StateBox />

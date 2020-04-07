@@ -8,7 +8,7 @@ import TokenAssistant from '../components/tokenassistant'
 const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
-    <TokenAssistantContextProvider>
+    <TokenAssistantContextProvider debug="true">
       <TokenAssistant />
     </TokenAssistantContextProvider>
   </Layout>

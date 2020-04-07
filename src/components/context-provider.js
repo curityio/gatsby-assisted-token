@@ -12,6 +12,7 @@ class TokenAssistantContextProvider extends Component {
     config = {};
     count = 0;
     tokenAssistant;
+    debug = false;
     state = {
         isLoggedIn: false,
     };
@@ -19,6 +20,7 @@ class TokenAssistantContextProvider extends Component {
     constructor(props) {
         super(props);
 
+        this.debug = props.debug === "true" ? true : false;
         this.loadConfiguration();
     }
 
@@ -78,7 +80,7 @@ class TokenAssistantContextProvider extends Component {
                 ' Make sure the server is running and/or update URL ' +
                 'of #assisted-token-js-script script');
         }
-        window.curity.debug = true;
+        window.curity.debug = this.debug;
         this.tokenAssistant = window.curity.token.assistant({
             clientId: CLIENT_ID,
         });

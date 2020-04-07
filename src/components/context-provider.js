@@ -1,0 +1,115 @@
+import React, { Component } from 'react';
+import {
+    CLIENT_ID,
+    ISSUER
+} from './constants';
+import axios from 'axios';
+
+const { Provider, Consumer } = React.createContext();
+
+class TokenAssistantContextProvider extends Component {
+    config = {};
+    count = 0;
+    tokenAssistant;
+    state = {
+        isLoggedIn: false,
+    };
+
+    constructor(props) {
+        super(props);
+
+        this.loadConfiguration();
+    }
+
+    render() {
+        return (
+            <Provider value={{
+                isLoggedIn: this.state.isLoggedIn, userName: this.state.userName, accessToken: this.state.accessToken, login: this.getToken, logout: this.logout
+            }}>
+                {this.props.children}
+            </Provider>
+        );
+    }
+
+    loadConfiguration = () => {
+        axios.get(ISSUER + "/.well-known/openid-configuration").then(response => {
+            this.config = response.data;
+            console.log(response.data);
+            this.addScriptToIndexFile();
+            this.tryLoadTokenAssistant();
+        });
+    };
+
+
+    tryLoadTokenAssistant = () => {
+        console.log("Loading assistant..");
+        if (window.curity) {
+            if (!this.tokenAssistant) {
+                this.loadTokenAssistant();
+                console.log("DONE");
+            }
+            console.log("Already loaded");
+        }
+        else {
+            setTimeout(() => {
+                this.count++;
+                if (this.count > 100) {
+                    return false;
+                }
+                this.tryLoadTokenAssistant();
+            }, 20);
+        }
+    }
+
+    addScriptToIndexFile = () => {
+        var head = window.document.head;
+        var script = window.document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = this.config.assisted_token_endpoint +
+            '/resources/js/assisted-token.js';
+        script.id = 'assisted-token-js-script';
+        head.appendChild(script);
+    }
+
+    loadTokenAssistant = () => {
+        if (!window.curity) {
+            throw new Error('Assisted token javascript was not found.' +
+                ' Make sure the server is running and/or update URL ' +
+                'of #assisted-token-js-script script');
+        }
+        window.curity.debug = true;
+        this.tokenAssistant = window.curity.token.assistant({
+            clientId: CLIENT_ID,
+        });
+    }
+
+    getToken = () => {
+        if (!this.tokenAssistant) {
+            console.error('Token Assistant is undefined.');
+            return false;
+        }
+        this.tokenAssistant.loginIfRequired({ "scope": "openid" }).then((msg) => {
+            console.log('Retrieved tokens', msg);
+            let additionalData = this.tokenAssistant.getAdditionalData();
+            console.log('additional data', additionalData)
+
+            this.setState({ isLoggedIn: true, accessToken: msg.token, userName: additionalData.subject });
+        }).fail((err) => {
+            console.log('Failed to retrieve tokens', err);
+        });
+    }
+
+    logout = () => {
+        if (!this.tokenAssistant) {
+            console.error('Token Assistant is undefined.');
+            return false;
+        }
+        this.tokenAssistant.logout().then(() => {
+            this.setState({ accessToken: undefined, userName: undefined, isLoggedIn: false });
+        }).fail((err) => {
+            console.err("Failed to logout.", err);
+        });
+    }
+}
+
+export { TokenAssistantContextProvider, Consumer as TokenAssistantContextConsumer };

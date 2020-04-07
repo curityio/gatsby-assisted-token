@@ -151,7 +151,7 @@ const ControlPanel = () => {
     )
 }
 
-function TokenAssistant(props) {
+const TokenAssistant = (props) => {
     return (
         <div className="tokenassistant">
             <TokenAssistantContextProvider debug={props.debug} issuer={props.issuer} clientId={props.clientId} scope={props.scope}>

@@ -7,7 +7,7 @@ import TokenAssistant from '../components/tokenassistant'
 const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
-    <TokenAssistant debug="true"/>
+    <TokenAssistant debug="true" issuer="https://dlindau.ngrok.io/~" clientId="assisted-token-example" />
   </Layout>
 )
 

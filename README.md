@@ -1,4 +1,8 @@
 # Gatsby/React Assisted Token Example
+
+[![Quality](https://curity.io/assets/images/badges/gatsby-assisted-token-quality.svg)](https://curity.io/resources/code-examples/status/)
+[![Availability](https://curity.io/assets/images/badges/gatsby-assisted-token-availability.svg)](https://curity.io/resources/code-examples/status/)
+
 This is an example based on https://github.com/curityio/react-assisted-token-website . It demonstrates the use of the Assisted Token Library together GATSBY CLI and the React Context API.
 
 To run in development mode:

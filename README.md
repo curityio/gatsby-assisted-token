@@ -25,7 +25,6 @@ The example uses a client with the following config:
       <config-backed>
       <client>
         <id>assisted-token-example</id>
-        <redirect-uris>https://localhost:8000</redirect-uris>
         <scope>read</scope>
         <allowed-origins>https://localhost:8000</allowed-origins>
         <capabilities>

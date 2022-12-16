@@ -48,5 +48,10 @@
   },
   "bugs": {
     "url": "https://github.com/gatsbyjs/gatsby/issues"
+  },
+  "overrides": {
+    "gatsby": {
+      "devcert": "1.2.2"
+    }
   }
 }
